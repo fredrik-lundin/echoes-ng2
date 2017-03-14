@@ -14,6 +14,7 @@ export interface YoutubePlayerState {
   showPlayer: boolean;
   playerState: number;
   isFullscreen: boolean;
+  playerPosition: { x: number, y: number };
 }
 let initialPlayerState: YoutubePlayerState = {
   mediaId: { videoId: 'NONE' },
@@ -23,9 +24,10 @@ let initialPlayerState: YoutubePlayerState = {
   },
   showPlayer: true,
   playerState: 0,
-  isFullscreen: false
+  isFullscreen: false,
+  playerPosition: { x: 0, y: 0 }
 };
-export function player (state: YoutubePlayerState = initialPlayerState, action: Action): YoutubePlayerState {
+export function player(state: YoutubePlayerState = initialPlayerState, action: Action): YoutubePlayerState {
 
   switch (action.type) {
     case PlayerActions.PLAY:
@@ -46,7 +48,19 @@ export function player (state: YoutubePlayerState = initialPlayerState, action: 
     case PlayerActions.RESET:
       return Object.assign({}, state, {
         isFullscreen: false,
-        playerState: 0
+        playerState: 0,
+        playerPosition: {
+          x: 0,
+          y: 0
+        }
+      });
+
+    case PlayerActions.SET_PLAYER_POSITION:
+      return Object.assign({}, state, {
+        playerPosition: {
+          x: action.payload.x,
+          y: action.payload.y
+        }
       });
 
     default:

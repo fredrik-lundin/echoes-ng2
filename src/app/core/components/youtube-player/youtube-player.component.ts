@@ -1,11 +1,10 @@
-import { EchoesState } from '../../store';
-import { Store } from '@ngrx/store';
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/take';
+import { Store } from '@ngrx/store';
 
 import { NowPlaylistService, YoutubePlayerService } from '../../services';
 import { getCurrentMedia, isPlayerPlaying, PlayerActions, YoutubePlayerState } from '../../store/youtube-player';
+import { EchoesState } from '../../store';
 
 import './youtube-player.scss';
 
@@ -20,7 +19,7 @@ import './youtube-player.scss';
   <section 
     [class.show-youtube-player]="(player$ | async).showPlayer"
     [class.fullscreen]="(player$ | async).isFullscreen">
-    <div class="yt-player ux-maker">
+    <div #player class="yt-player ux-maker" [style.left]='playerPosX' [style.top]='playerPosY'>
       <player-resizer (toggle)="togglePlayer()" [fullScreen]="(player$ | async).showPlayer"></player-resizer>
       <youtube-player class="nicer-ux"
         (ready)="setupPlayer($event)"
@@ -47,6 +46,11 @@ import './youtube-player.scss';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class YoutubePlayer implements OnInit {
+  @ViewChild('player') player;
+
+  playerPosX;
+  playerPosY;
+
   player$: Observable<YoutubePlayerState>;
   media$: Observable<any>;
   isPlayerPlaying$: Observable<boolean>;
@@ -64,6 +68,13 @@ export class YoutubePlayer implements OnInit {
     this.media$ = getCurrentMedia(this.player$);
     this.isPlayerPlaying$ = isPlayerPlaying(this.player$);
     this.store.dispatch(this.playerActions.reset());
+
+    this.playerService.setupDragListeners(this.player.nativeElement);
+
+    this.store.select(state => state.player).subscribe(player => {
+      this.playerPosX = `${player.playerPosition.x}px`;
+      this.playerPosY = `${player.playerPosition.y}px`;
+    });
   }
 
   setupPlayer (player) {

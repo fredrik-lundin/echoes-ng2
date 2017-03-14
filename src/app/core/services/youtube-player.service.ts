@@ -80,4 +80,33 @@ export class YoutubePlayerService {
     this.player.setSize(width, height);
     this.store.dispatch(this.playerActions.fullScreen());
   }
+
+  setupDragListeners(player: HTMLElement) {
+    const mouseup = Observable.fromEvent(document, 'mouseup');
+    const mousemove = Observable.fromEvent(document, 'mousemove');
+    const mousedown = Observable.fromEvent(player, 'mousedown');
+
+    const mousedrag = mousedown.mergeMap((md: any) => {
+      const startX = md.clientX + window.scrollX;
+      const startY = md.clientY + window.scrollY;
+      const startLeft = parseInt(player.style.left, 10) || 0;
+      const startTop = parseInt(player.style.top, 10) || 0;
+
+      return mousemove.map((mm: any) => {
+        mm.preventDefault();
+
+        return {
+          x: startLeft + mm.clientX - startX,
+          y: startTop + mm.clientY - startY
+        };
+      }).takeUntil(mouseup);
+    });
+
+    mousedrag.subscribe((pos) => {
+      this.store.dispatch(this.playerActions.setPlayerPosition({
+        y: pos.y,
+        x: pos.x
+      }));
+    });
+  }
 }

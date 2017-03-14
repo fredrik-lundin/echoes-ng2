@@ -12,6 +12,7 @@ export class PlayerActions {
   static STATE_CHANGE = '[Player] STATE_CHANGE';
   static FULLSCREEN = '[Player] FULLSCREEN';
   static RESET = '[Player] RESET';
+  static SET_PLAYER_POSITION = '[Player] SET_PLAYER_POSITION';
 
   togglePlayer = ActionCreatorFactory.create<boolean>(PlayerActions.TOGGLE_PLAYER, true);
 
@@ -42,13 +43,6 @@ export class PlayerActions {
     };
   }
 
-  // togglePlayer(visible: boolean = true): Action {
-  //   return {
-  //     type: PlayerActions.TOGGLE_PLAYER,
-  //     payload: visible
-  //   };
-  // }
-
   fullScreen(): Action {
     return {
       type: PlayerActions.FULLSCREEN
@@ -58,6 +52,13 @@ export class PlayerActions {
   reset(): Action {
     return {
       type: PlayerActions.RESET
+    };
+  }
+
+  setPlayerPosition(pos: {x: number, y: number}) {
+    return {
+      type: PlayerActions.SET_PLAYER_POSITION,
+      payload: pos
     };
   }
 }
