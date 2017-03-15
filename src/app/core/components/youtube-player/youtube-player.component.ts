@@ -19,7 +19,9 @@ import './youtube-player.scss';
   <section 
     [class.show-youtube-player]="(player$ | async).showPlayer"
     [class.fullscreen]="(player$ | async).isFullscreen">
-    <div #player class="yt-player ux-maker" [style.left]='playerPosX' [style.top]='playerPosY'>
+    <div #player class="yt-player ux-maker" style="cursor: grab" 
+        [style.left]='(player$ | async).playerPosition.x+"px"' 
+        [style.top]='(player$ | async).playerPosition.y+"px"'>
       <player-resizer (toggle)="togglePlayer()" [fullScreen]="(player$ | async).showPlayer"></player-resizer>
       <youtube-player class="nicer-ux"
         (ready)="setupPlayer($event)"
@@ -48,9 +50,6 @@ import './youtube-player.scss';
 export class YoutubePlayer implements OnInit {
   @ViewChild('player') player;
 
-  playerPosX;
-  playerPosY;
-
   player$: Observable<YoutubePlayerState>;
   media$: Observable<any>;
   isPlayerPlaying$: Observable<boolean>;
@@ -68,13 +67,7 @@ export class YoutubePlayer implements OnInit {
     this.media$ = getCurrentMedia(this.player$);
     this.isPlayerPlaying$ = isPlayerPlaying(this.player$);
     this.store.dispatch(this.playerActions.reset());
-
-    this.playerService.setupDragListeners(this.player.nativeElement);
-
-    this.store.select(state => state.player).subscribe(player => {
-      this.playerPosX = `${player.playerPosition.x}px`;
-      this.playerPosY = `${player.playerPosition.y}px`;
-    });
+    this.playerService.setupDragListener(this.player.nativeElement);
   }
 
   setupPlayer (player) {

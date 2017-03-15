@@ -81,7 +81,7 @@ export class YoutubePlayerService {
     this.store.dispatch(this.playerActions.fullScreen());
   }
 
-  setupDragListeners(player: HTMLElement) {
+  setupDragListener(player: HTMLElement) {
     const mouseup = Observable.fromEvent(document, 'mouseup');
     const mousemove = Observable.fromEvent(document, 'mousemove');
     const mousedown = Observable.fromEvent(player, 'mousedown');
