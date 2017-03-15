@@ -19,29 +19,29 @@ import './youtube-player.scss';
   <section 
     [class.show-youtube-player]="(player$ | async).showPlayer"
     [class.fullscreen]="(player$ | async).isFullscreen">
-    <div #player class="yt-player ux-maker" style="cursor: grab" 
+    <div #player class="yt-player ux-maker" 
         [style.left]='(player$ | async).playerPosition.x+"px"' 
         [style.top]='(player$ | async).playerPosition.y+"px"'>
       <player-resizer (toggle)="togglePlayer()" [fullScreen]="(player$ | async).showPlayer"></player-resizer>
       <youtube-player class="nicer-ux"
         (ready)="setupPlayer($event)"
-        (change)="updatePlayerState($event)"
-      ></youtube-player>
+        (change)="updatePlayerState($event)">
+      </youtube-player>
     </div>
     <div class="container-fluid">
       <media-info class="col-md-5 col-xs-7"
           [player]="player$ | async"
           [minimized]="media$ | async"
-          (thumbClick)="toggleFullScreen()"
-      ></media-info>
+          (thumbClick)="toggleFullScreen()">
+        </media-info>
       <player-controls class="col-md-4 col-xs-5 controls-container nicer-ux" 
         [class.yt-playing]="isPlayerPlaying$ | async"
         [media]="media$ | async"
         (play)="playVideo($event)" 
         (pause)="pauseVideo()" 
         (next)="playNextTrack()"
-        (previous)="playPreviousTrack()"
-      ></player-controls>
+        (previous)="playPreviousTrack()">
+      </player-controls>
     </div>
   </section>
   `,
