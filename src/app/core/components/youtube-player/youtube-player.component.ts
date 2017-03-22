@@ -22,7 +22,12 @@ import './youtube-player.scss';
     <div #player class="yt-player ux-maker" 
         [style.left]='(player$ | async).playerPosition.x+"px"' 
         [style.top]='(player$ | async).playerPosition.y+"px"'>
-      <player-resizer (toggle)="togglePlayer()" [fullScreen]="(player$ | async).showPlayer"></player-resizer>
+      <player-resizer (toggle)="togglePlayer()" 
+                      (resetPlayerPosition)="resetPlayerPosition()"
+                      [fullScreen]="(player$ | async).showPlayer"
+                      [playerMoved]="(player$ | async).playerPosition.x !== 0 || 
+                                     (player$ | async).playerPosition.y !== 0">
+      </player-resizer>
       <youtube-player class="nicer-ux"
         (ready)="setupPlayer($event)"
         (change)="updatePlayerState($event)">
@@ -92,6 +97,10 @@ export class YoutubePlayer implements OnInit {
 
   togglePlayer () {
     this.playerService.togglePlayer();
+  }
+
+  resetPlayerPosition() {
+    this.store.dispatch(this.playerActions.setPlayerPosition({x: 0, y: 0}));
   }
 
   toggleFullScreen () {
